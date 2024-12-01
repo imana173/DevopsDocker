@@ -1,0 +1,25 @@
+version: '3'
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'  # Utilisation de l'image GitLab Community Edition
+    container_name: gitlab_container_new
+    ports:
+      - "8086:80"  # Port HTTP
+      - "443:443"  # Port HTTPS
+      - "2223:22"  # Port SSH
+    volumes:
+      - gitlab-config:/etc/gitlab      # Volume pour les fichiers de configuration de GitLab
+      - gitlab-logs:/var/log/gitlab    # Volume pour les logs de GitLab
+      - gitlab-data:/var/opt/gitlab    # Volume pour les données (dépôts, etc.)
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url '${GITLAB_EXTERNAL_URL}'  # Utilisation de la variable d'environnement pour l'URL externe
+        gitlab_rails['gitlab_shell_ssh_port'] = 2223  # Port SSH de GitLab
+
+volumes:
+  gitlab-config: {}  # Volume persistant pour les fichiers de configuration
+  gitlab-logs: {}    # Volume persistant pour les logs
+  gitlab-data: {}    # Volume persistant pour les données de GitLab
+
+
+

@@ -1,0 +1,7 @@
+common_packages:
+  - vim
+  - wget
+  - curl
+  - git
+  - unzip
+

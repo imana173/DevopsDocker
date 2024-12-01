@@ -1,0 +1,22 @@
+gitlab_external_url: "http://192.168.127.129:8086"
+gitlab_ssh_port: 2223
+gitlab_dependencies:
+  - curl
+  - openssh-server
+  - ca-certificates
+  - tzdata
+gitlab_package_name: gitlab-ce
+gitlab_config_file: "/etc/gitlab/gitlab.rb"
+gitlab_host: "192.168.127.129:8086"
+gitlab_ctl_command: "gitlab-ctl"
+docker_compose_version: "1.29.2"
+docker_image: "gitlab/gitlab-ce:latest"
+docker_ports:
+  - "8086:80"
+  - "443:443"
+  - "2223:22"
+docker_volumes:
+  - gitlab-config:/etc/gitlab
+  - gitlab-logs:/var/log/gitlab
+  - gitlab-data:/var/opt/gitlab
+

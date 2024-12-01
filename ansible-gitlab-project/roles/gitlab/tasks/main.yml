@@ -1,0 +1,57 @@
+- name: Update APT packages
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Install dependencies
+  apt:
+    name: "{{ gitlab_dependencies }}"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Ensure Docker is installed
+  apt:
+    name: docker.io
+    state: present
+  become: yes
+
+- name: Install Docker Compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+  become: yes
+
+- name: Create directory for GitLab deployment
+  file:
+    path: /opt/gitlab-deployment
+    state: directory
+  become: yes
+
+- name: Copy Docker Compose file to target
+  copy:
+    src: roles/gitlab/docker-compose.yml
+    dest: /opt/gitlab-deployment/docker-compose.yml
+  become: yes
+
+- name: Build Docker image for GitLab
+  command: docker-compose -f /opt/gitlab-deployment/docker-compose.yml build
+  become: yes
+
+- name: Deploy GitLab container with Docker Compose
+  command: docker-compose -f /opt/gitlab-deployment/docker-compose.yml up -d
+  environment:
+    GITLAB_EXTERNAL_URL: "{{ gitlab_external_url }}"
+  args:
+    chdir: /opt/gitlab-deployment/
+  become: yes
+
+- name: Apply GitLab Configuration
+  template:
+    src: gitlab.rb.j2
+    dest: "{{ gitlab_config_file }}"
+  become: yes
+  notify: Reconfigure GitLab
+
+

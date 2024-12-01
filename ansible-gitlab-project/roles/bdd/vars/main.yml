@@ -1,0 +1,8 @@
+bdd_databases:
+  - all
+  - dev
+  - stage
+  - prod
+
+
+postgresql_password: "123Imane"
